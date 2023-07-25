@@ -1,132 +1,52 @@
-import { darkTheme, lightTheme } from "./utils/Theme";
-import styled, { ThemeProvider } from "styled-components";
-import Menu from "./components/Menu";
-import Navbar from "./components/Navbar";
-import { useState, React } from "react";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
-import Home from "./pages/Home";
-import Video from "./pages/Video";
-import SignIn from "./pages/SignIn";
-import Search from "./pages/Search";
-import { useSelector } from "react-redux";
-// import { useSwipeable } from "react-swipeable";
-import useNetworkStatus from "./utils/useNetworkStatus";
-import Profile from "./pages/Profile";
-import ReportIssueModal from "./components/ReportModal";
-
-const Container = styled.div`
-  display: flex;
-
-  @media (max-width: 480px) {
-    overflow-x: hidden;
-    justify-content: center;
-    align-items: center;
-  }
-`;
-
-// const SwipeContainer = styled.div`
-//   ${
-//     "" /* background-color: ${({ theme }) => theme.bg};
-//  &.open {
-//     display : none;
-//   } */
-//   }
-// `;
-
-const Main = styled.div`
-  flex: 7;
-  width: 100%;
-  background-color: ${({ theme }) => theme.bg};
-  /* padding:0;
-  margin:0 */
-`;
-
-const Wrapper = styled.div`
-  padding: 0;
-  /* gap: 0; */
-  padding: 22px 96px;
-  @media (max-width: 480px) {
-    padding: 0;
-  }
-`;
-
-const NetworkStatus = styled.div`
-  background-color: #fff3cd;
-  border: 1px solid #ffeeba;
-  padding: 28px;
-  text-align: center;
-  border-radius: 10px;
-  color: #856404;
-  font-weight: bold;
-  margin: 10px;
-  z-index: 10px;
-`;
-
+import './App.css';
+import "./components/Layout/Layout";
+import {Routes,Route} from "react-router-dom";
+import HomePage from './pages/HomePage';
+import Pagenotfound from './pages/Pagenotfound';
+import Policy from './pages/Policy';
+import Contact from './pages/Contact';
+import About from './pages/About';
+import Register from './pages/Auth/Register';
+import Login from './pages/Auth/Login';
+import ForgotPassword from "./pages/Auth/ForgotPassword"
+import Dashboard from './pages/user/Dashboard';
+import PrivateRoute from './components/Routes/Private';
+import AdminRoute from "./components/Routes/AdminRoute"
+import AdminDashboard from './pages/Admin/AdminDashboard';
+import CreateCategory from './pages/Admin/CreateCategory';
+import CreateProduct from './pages/Admin/CreateProduct';
+import Users from './pages/Admin/Users';
+import Orders from './pages/user/Orders';
+import Profile from './pages/user/Profile';
+import Products from "./pages/Admin/Products"
 function App() {
-  const [darkMode, setDarkMode] = useState(true);
-  const [isOpen, setIsOpen] = useState(false);
-  const [openReportModal, setOpenReportModal] = useState(false);
-
-  const handleToggle = () => {
-    setIsOpen(!isOpen);
-  };
-
-  // const swipeHandlers = useSwipeable({
-  //   onSwipedLeft: handleToggle,
-  //   onSwipedRight: handleToggle,
-  // });
-
-  const { currentUser } = useSelector((state) => state.user);
-  const status = useNetworkStatus();
-
   return (
-    <ThemeProvider theme={darkMode ? darkTheme : lightTheme}>
-      {status ? null : (
-        <NetworkStatus>You are currently Offline !</NetworkStatus>
-      )}
-      <Container>
-        <BrowserRouter>
-          <Menu
-            isOpen={isOpen}
-            darkMode={darkMode}
-            setDarkMode={setDarkMode}
-            setOpenReportModal={setOpenReportModal}
-          />
-          <Main>
-            <Navbar handleToggle={handleToggle} darkMode={darkMode} />
-            <Main>
-              <Wrapper>
-                <ReportIssueModal
-                  openReportModal={openReportModal}
-                  setOpenReportModal={setOpenReportModal}
-                />
-                <Routes>
-                  <Route path="/">
-                    <Route index element={<Home type="random" />} />
-                    <Route
-                      path="trends"
-                      index
-                      element={<Home type="trend" />}
-                    />
-                    <Route path="subscriptions" element={<Home type="sub" />} />
-                    <Route path="settings" element={<Home type="settings" />} />
-                    <Route path="search" element={<Search />} />
-                    <Route path="profile" element={<Profile />} />
-                    <Route
-                      path="signin"
-                      element={currentUser ? <Home /> : <SignIn />}
-                    />
-                    <Route path="video">
-                      <Route path=":id" element={<Video />} />
-                    </Route>
-                  </Route>
-                </Routes>
-              </Wrapper>
-            </Main>
-          </Main>
-        </BrowserRouter>
-      </Container>
-    </ThemeProvider>
+    <>
+      <Routes>
+        <Route path="/" element={<HomePage/>}/>
+        <Route path="/register" element={<Register/>}/>
+        <Route path='/dashboard' element={<PrivateRoute/>}>
+          <Route path='user' element={<Dashboard/>}/>
+          <Route path='user/profile' element={<Profile/>}/>
+          <Route path='user/orders' element={<Orders/>}/>
+        </Route>
+        <Route path='/dashboard' element={<AdminRoute/>}>
+          <Route path='admin' element={<AdminDashboard/>}/>
+          <Route path='admin/create-category' element={<CreateCategory/>}/>
+          <Route path='admin/create-products' element={<CreateProduct/>}/>
+          <Route path='admin/users' element={<Users/>}/>
+          <Route path='admin/products' element={<Products/>}/>
+        </Route>
+        <Route path="/login" element={<Login/>}/>
+        <Route path="/forgot-password" element={<ForgotPassword/>}/>
+
+        <Route path='/about' element={<About/>}/>
+        <Route path='/contact' element={<Contact/>}/>
+        <Route path='/policy' element={<Policy/>}/>
+        <Route path='/*' element={<Pagenotfound/>}/>
+      </Routes>
+      
+    </>
   );
 }
 
